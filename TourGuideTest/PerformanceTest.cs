@@ -39,6 +39,7 @@ namespace TourGuideTest
         [Fact(Skip = ("Delete Skip when you want to pass the test"))]
         public void HighVolumeTrackLocation()
         {
+            // Arrange
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
             _fixture.Initialize(1000);
 
@@ -47,6 +48,7 @@ namespace TourGuideTest
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
+            // Act
             foreach (var user in allUsers)
             {
                 _fixture.TourGuideService.TrackUserLocation(user);
@@ -56,12 +58,14 @@ namespace TourGuideTest
 
             _output.WriteLine($"highVolumeTrackLocation: Time Elapsed: {stopWatch.Elapsed.TotalSeconds} seconds.");
 
+            // Assert
             Assert.True(TimeSpan.FromMinutes(15).TotalSeconds >= stopWatch.Elapsed.TotalSeconds);
         }
 
         [Fact(Skip = ("Delete Skip when you want to pass the test"))]
         public void HighVolumeGetRewards()
         {
+            // Arrange
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
             _fixture.Initialize(10);
 
@@ -74,6 +78,7 @@ namespace TourGuideTest
 
             allUsers.ForEach(u => _fixture.RewardsService.CalculateRewards(u));
 
+            // Act & Assert
             foreach (var user in allUsers)
             {
                 Assert.True(user.UserRewards.Count > 0);
@@ -82,6 +87,8 @@ namespace TourGuideTest
             _fixture.TourGuideService.Tracker.StopTracking();
 
             _output.WriteLine($"highVolumeGetRewards: Time Elapsed: {stopWatch.Elapsed.TotalSeconds} seconds.");
+
+            // Assert
             Assert.True(TimeSpan.FromMinutes(20).TotalSeconds >= stopWatch.Elapsed.TotalSeconds);
         }
     }
