@@ -1,6 +1,4 @@
 ﻿using GpsUtil.Location;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Globalization;
 using TourGuide.LibrairiesWrappers.Interfaces;
 using TourGuide.Services.Interfaces;
@@ -92,7 +90,7 @@ public class TourGuideService : ITourGuideService
 
     public List<Attraction> GetNearByAttractions(VisitedLocation visitedLocation)
     {
-        List<Attraction> nearbyAttractions = new ();
+        List<Attraction> nearbyAttractions = new();
         foreach (var attraction in _gpsUtil.GetAttractions())
         {
             if (_rewardsService.IsWithinAttractionProximity(attraction, visitedLocation.Location))
