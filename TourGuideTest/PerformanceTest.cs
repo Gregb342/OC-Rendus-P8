@@ -62,7 +62,7 @@ namespace TourGuideTest
             Assert.True(TimeSpan.FromMinutes(15).TotalSeconds >= stopWatch.Elapsed.TotalSeconds);
         }
 
-        [Fact(Skip = ("Delete Skip when you want to pass the test"))]
+        [Fact]
         public void HighVolumeGetRewards()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace TourGuideTest
             foreach (var user in allUsers)
             {
                 Assert.True(user.UserRewards.Count > 0);
-            }
+            } 
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
