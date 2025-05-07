@@ -19,14 +19,14 @@ namespace TourGuideTest
         }
 
         [Fact]
-        public void GetUserLocation()
+        public async Task GetUserLocation()
         {
             // Arrange
             _fixture.Initialize(0);
             var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
 
             // Act
-            var visitedLocation = _fixture.TourGuideService.TrackUserLocation(user);
+            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
             _fixture.TourGuideService.Tracker.StopTracking();
 
             // assert
@@ -77,12 +77,12 @@ namespace TourGuideTest
         }
 
         [Fact]
-        public void TrackUser()
+        public async Task TrackUser()
         {
             // Arrange
             _fixture.Initialize();
             var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var visitedLocation = _fixture.TourGuideService.TrackUserLocation(user);
+            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
 
             // Act
             _fixture.TourGuideService.Tracker.StopTracking();
@@ -92,12 +92,12 @@ namespace TourGuideTest
         }
 
         [Fact]
-        public void GetNearbyAttractions()
+        public async Task GetNearbyAttractions()
         {
             // Arrange
             _fixture.Initialize(0);
             var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var visitedLocation = _fixture.TourGuideService.TrackUserLocation(user);
+            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
 
             // Act
             List<Attraction> attractions = _fixture.TourGuideService.GetNearByAttractions(visitedLocation);
