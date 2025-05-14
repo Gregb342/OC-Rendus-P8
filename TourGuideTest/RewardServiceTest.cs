@@ -13,12 +13,12 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
     }
 
     [Fact]
-    public void UserGetRewards()
+    public async Task UserGetRewards()
     {
         _fixture.Initialize(0);
         var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-        var attraction = _fixture.GpsUtil.GetAttractions().First();
-        user.AddToVisitedLocations(new VisitedLocation(user.UserId, attraction, DateTime.Now));
+        var attraction = await _fixture.GpsUtil.GetAttractions();
+        user.AddToVisitedLocations(new VisitedLocation(user.UserId, attraction.First(), DateTime.Now));
         _fixture.TourGuideService.TrackUserLocation(user);
         var userRewards = user.UserRewards;
         _fixture.TourGuideService.Tracker.StopTracking();
@@ -26,14 +26,14 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
     }
 
     [Fact]
-    public void IsWithinAttractionProximity()
+    public async Task IsWithinAttractionProximity()
     {
-        var attraction = _fixture.GpsUtil.GetAttractions().First();
-        Assert.True(_fixture.RewardsService.IsWithinRewardRange(attraction, attraction));
+        var attraction = await _fixture.GpsUtil.GetAttractions();
+        Assert.True(_fixture.RewardsService.IsWithinRewardRange(attraction.First(), attraction.First()));
     }
 
     [Fact]
-    public void NearAllAttractions()
+    public async Task NearAllAttractions()
     {
         _fixture.Initialize(1);
         _fixture.RewardsService.SetProximityBuffer(int.MaxValue);
@@ -42,8 +42,9 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
         _fixture.RewardsService.CalculateRewards(user);
         var userRewards = _fixture.TourGuideService.GetUserRewards(user);
         _fixture.TourGuideService.Tracker.StopTracking();
+        var attractions = await _fixture.GpsUtil.GetAttractions();
 
-        Assert.Equal(_fixture.GpsUtil.GetAttractions().Count, userRewards.Count);
+        Assert.Equal(attractions.Count, userRewards.Count);
     }
 
 }

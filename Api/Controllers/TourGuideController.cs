@@ -37,7 +37,7 @@ public class TourGuideController : ControllerBase
     public async Task<ActionResult<List<Attraction>>> GetNearbyAttractions([FromQuery] string userName)
     {
         VisitedLocation visitedLocation = await _tourGuideService.GetUserLocation(GetUser(userName));
-        List<Attraction> attractions = _tourGuideService.GetNearByAttractions(visitedLocation);
+        List<Attraction> attractions = await _tourGuideService.GetNearByAttractions(visitedLocation);
         return Ok(attractions);
     }
 

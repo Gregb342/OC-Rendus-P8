@@ -100,7 +100,7 @@ namespace TourGuideTest
             var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
 
             // Act
-            List<Attraction> attractions = _fixture.TourGuideService.GetNearByAttractions(visitedLocation);
+            List<Attraction> attractions = await _fixture.TourGuideService.GetNearByAttractions(visitedLocation);
 
             _fixture.TourGuideService.Tracker.StopTracking();
 

@@ -63,7 +63,7 @@ namespace TourGuideTest
         }
 
         [Fact(Skip = ("Delete Skip when you want to pass the test"))]
-        public void HighVolumeGetRewards()
+        public async Task HighVolumeGetRewards()
         {
             // Arrange
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
@@ -72,9 +72,9 @@ namespace TourGuideTest
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            Attraction attraction = _fixture.GpsUtil.GetAttractions()[0];
+            var attraction = await _fixture.GpsUtil.GetAttractions();
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
-            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attraction, DateTime.Now)));
+            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attraction[0], DateTime.Now)));
 
             allUsers.ForEach(u => _fixture.RewardsService.CalculateRewards(u));
 
