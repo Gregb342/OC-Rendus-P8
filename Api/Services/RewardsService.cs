@@ -33,7 +33,7 @@ public class RewardsService : IRewardsService
 
     public async Task CalculateRewards(User user)
     {
-        List<VisitedLocation> userLocations = user.VisitedLocations;
+        List<VisitedLocation> userLocations = user.VisitedLocations.ToList();
         List<Attraction> attractions = await _gpsUtil.GetAttractions();
 
         var rewardedAttractions = new HashSet<string>(
