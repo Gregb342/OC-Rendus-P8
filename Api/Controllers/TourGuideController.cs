@@ -18,9 +18,9 @@ public class TourGuideController : ControllerBase
     }
 
     [HttpGet("getLocation")]
-    public ActionResult<VisitedLocation> GetLocation([FromQuery] string userName)
+    public async Task<ActionResult<VisitedLocation>> GetLocation([FromQuery] string userName)
     {
-        var location = _tourGuideService.GetUserLocation(GetUser(userName));
+        VisitedLocation location = await _tourGuideService.GetUserLocation(GetUser(userName));
         return Ok(location);
     }
 
@@ -34,24 +34,24 @@ public class TourGuideController : ControllerBase
     // The reward points for visiting each Attraction.
     //    Note: Attraction reward points can be gathered from RewardsCentral
     [HttpGet("getNearbyAttractions")]
-    public ActionResult<List<Attraction>> GetNearbyAttractions([FromQuery] string userName)
+    public async Task<ActionResult<List<Attraction>>> GetNearbyAttractions([FromQuery] string userName)
     {
-        var visitedLocation = _tourGuideService.GetUserLocation(GetUser(userName));
-        var attractions = _tourGuideService.GetNearByAttractions(visitedLocation);
+        VisitedLocation visitedLocation = await _tourGuideService.GetUserLocation(GetUser(userName));
+        List<Attraction> attractions = await _tourGuideService.GetNearByAttractions(visitedLocation);
         return Ok(attractions);
     }
 
     [HttpGet("getRewards")]
     public ActionResult<List<UserReward>> GetRewards([FromQuery] string userName)
     {
-        var rewards = _tourGuideService.GetUserRewards(GetUser(userName));
+        List<UserReward> rewards = _tourGuideService.GetUserRewards(GetUser(userName));
         return Ok(rewards);
     }
 
     [HttpGet("getTripDeals")]
     public ActionResult<List<Provider>> GetTripDeals([FromQuery] string userName)
     {
-        var deals = _tourGuideService.GetTripDeals(GetUser(userName));
+        List<Provider> deals = _tourGuideService.GetTripDeals(GetUser(userName));
         return Ok(deals);
     }
 
