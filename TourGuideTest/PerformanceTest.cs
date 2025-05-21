@@ -46,8 +46,8 @@ namespace TourGuideTest
 
             Stopwatch stopWatch = new();
             stopWatch.Start();
-            var tasks = new List<Task>();
-            foreach (var user in allUsers)
+            List<Task> tasks = new List<Task>();
+            foreach (User user in allUsers)
             {
                 tasks.Add(_fixture.TourGuideService.TrackUserLocation(user));
             }
@@ -69,11 +69,11 @@ namespace TourGuideTest
             Stopwatch stopWatch = new();
             stopWatch.Start();
 
-            var attractions = await _fixture.GpsUtil.GetAttractions();
+            List<Attraction> attractions = await _fixture.GpsUtil.GetAttractions();
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
             allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attractions[0], DateTime.Now)));
-            var tasks = new List<Task>();
-            foreach (var user in allUsers)
+            List<Task> tasks = new List<Task>();
+            foreach (User user in allUsers)
             {
                 tasks.Add(_fixture.RewardsService.CalculateRewards(user));
             }

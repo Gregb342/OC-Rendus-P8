@@ -1,5 +1,6 @@
 ﻿using GpsUtil.Location;
 using Microsoft.AspNetCore.Mvc;
+using TourGuide.Services;
 using TourGuide.Services.Interfaces;
 using TourGuide.Users;
 using TripPricer;
@@ -11,10 +12,12 @@ namespace TourGuide.Controllers;
 public class TourGuideController : ControllerBase
 {
     private readonly ITourGuideService _tourGuideService;
+    private readonly IRewardsService _rewardsService;
 
-    public TourGuideController(ITourGuideService tourGuideService)
+    public TourGuideController(ITourGuideService tourGuideService, IRewardsService rewardsService)
     {
         _tourGuideService = tourGuideService;
+        _rewardsService = rewardsService;
     }
 
     [HttpGet("getLocation")]
@@ -24,21 +27,38 @@ public class TourGuideController : ControllerBase
         return Ok(location);
     }
 
-    // TODO: Change this method to no longer return a List of Attractions.
-    // Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
-    // Return a new JSON object that contains:
-    // Name of Tourist attraction, 
-    // Tourist attractions lat/long, 
-    // The user's location lat/long, 
-    // The distance in miles between the user's location and each of the attractions.
-    // The reward points for visiting each Attraction.
-    //    Note: Attraction reward points can be gathered from RewardsCentral
     [HttpGet("getNearbyAttractions")]
     public async Task<ActionResult<List<Attraction>>> GetNearbyAttractions([FromQuery] string userName)
     {
-        VisitedLocation visitedLocation = await _tourGuideService.GetUserLocation(GetUser(userName));
-        List<Attraction> attractions = await _tourGuideService.GetNearByAttractions(visitedLocation);
-        return Ok(attractions);
+        List<object> list = new();
+        try
+        {
+            User user = GetUser(userName);
+            VisitedLocation visitedLocation = await _tourGuideService.GetUserLocation(user);
+            List<Attraction> attractions = await _tourGuideService.GetNearByAttractions(visitedLocation);
+
+            foreach (Attraction attraction in attractions)
+            {
+                list.Add(new
+                {
+                    Name = attraction.AttractionName,
+                    attraction.Latitude,
+                    attraction.Longitude,
+                    Distance = _rewardsService.GetDistance(attraction, visitedLocation.Location),
+                    Reward = _rewardsService.GetRewardPoints(attraction, user)
+                });
+            }
+            return Ok(new
+            {
+                UserLatitude = visitedLocation.Location.Latitude,
+                UserLongitude = visitedLocation.Location.Longitude,
+                Attractions = list
+            });
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet("getRewards")]
