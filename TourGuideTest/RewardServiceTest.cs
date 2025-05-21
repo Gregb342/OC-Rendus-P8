@@ -16,11 +16,11 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
     public async Task UserGetRewards()
     {
         _fixture.Initialize(0);
-        var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-        var attractions = await _fixture.GpsUtil.GetAttractions();
+        User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+        List<Attraction> attractions = await _fixture.GpsUtil.GetAttractions();
         user.AddToVisitedLocations(new VisitedLocation(user.UserId, attractions.First(), DateTime.Now));
         await _fixture.TourGuideService.TrackUserLocation(user);
-        var userRewards = user.UserRewards;
+        List<UserReward> userRewards = user.UserRewards;
         _fixture.TourGuideService.Tracker.StopTracking();
         Assert.True(userRewards.Count == 1);
     }
@@ -28,7 +28,7 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
     [Fact]
     public async Task IsWithinAttractionProximity()
     {
-        var attraction = await _fixture.GpsUtil.GetAttractions();
+        List<Attraction> attraction = await _fixture.GpsUtil.GetAttractions();
         Assert.True(_fixture.RewardsService.IsWithinRewardRange(attraction.First(), attraction.First()));
     }
 
@@ -38,11 +38,11 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
         _fixture.Initialize(1);
         _fixture.RewardsService.SetProximityBuffer(int.MaxValue);
 
-        var user = _fixture.TourGuideService.GetAllUsers().First();
+        User user = _fixture.TourGuideService.GetAllUsers().First();
         await _fixture.RewardsService.CalculateRewards(user);
-        var userRewards = _fixture.TourGuideService.GetUserRewards(user);
+        List<UserReward> userRewards = _fixture.TourGuideService.GetUserRewards(user);
         _fixture.TourGuideService.Tracker.StopTracking();
-        var attractions = await _fixture.GpsUtil.GetAttractions();
+        List<Attraction> attractions = await _fixture.GpsUtil.GetAttractions();
 
         Assert.Equal(attractions.Count, userRewards.Count);
     }

@@ -23,10 +23,10 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize(0);
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
 
             // Act
-            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
+            VisitedLocation visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
             _fixture.TourGuideService.Tracker.StopTracking();
 
             // assert
@@ -38,15 +38,15 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize(0);
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var user2 = new User(Guid.NewGuid(), "jon2", "000", "jon2@tourGuide.com");
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            User user2 = new User(Guid.NewGuid(), "jon2", "000", "jon2@tourGuide.com");
 
             // Act
             _fixture.TourGuideService.AddUser(user);
             _fixture.TourGuideService.AddUser(user2);
 
-            var retrievedUser = _fixture.TourGuideService.GetUser(user.UserName);
-            var retrievedUser2 = _fixture.TourGuideService.GetUser(user2.UserName);
+            User retrievedUser = _fixture.TourGuideService.GetUser(user.UserName);
+            User retrievedUser2 = _fixture.TourGuideService.GetUser(user2.UserName);
 
             _fixture.TourGuideService.Tracker.StopTracking();
 
@@ -60,8 +60,8 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize(0);
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var user2 = new User(Guid.NewGuid(), "jon2", "000", "jon2@tourGuide.com");
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            User user2 = new User(Guid.NewGuid(), "jon2", "000", "jon2@tourGuide.com");
 
             // Act
             _fixture.TourGuideService.AddUser(user);
@@ -81,8 +81,8 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize();
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            VisitedLocation visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
 
             // Act
             _fixture.TourGuideService.Tracker.StopTracking();
@@ -96,8 +96,8 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize(0);
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
-            var visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            VisitedLocation visitedLocation = await _fixture.TourGuideService.TrackUserLocation(user);
 
             // Act
             List<Attraction> attractions = await _fixture.TourGuideService.GetNearByAttractions(visitedLocation);
@@ -113,7 +113,7 @@ namespace TourGuideTest
         {
             // Arrange
             _fixture.Initialize(0);
-            var user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
+            User user = new User(Guid.NewGuid(), "jon", "000", "jon@tourGuide.com");
             List<Provider> providers = _fixture.TourGuideService.GetTripDeals(user);
 
             // Act
