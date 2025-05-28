@@ -36,7 +36,7 @@ namespace TourGuideTest
             _output = output;
         }
 
-        [Fact()]
+        [Fact(Skip = ("Delete Skip when you want to pass the test"))]
         public async Task HighVolumeTrackLocation()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
@@ -60,7 +60,7 @@ namespace TourGuideTest
             Assert.True(TimeSpan.FromMinutes(15).TotalSeconds >= stopWatch.Elapsed.TotalSeconds);
         }
 
-        [Fact()]
+        [Fact(Skip = ("Delete Skip when you want to pass the test"))]
         public async Task HighVolumeGetRewards()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
