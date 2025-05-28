@@ -1,14 +1,6 @@
 ﻿using GpsUtil.Location;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TourGuide.LibrairiesWrappers.Interfaces;
-using TourGuide.Services.Interfaces;
 using TourGuide.Users;
-using TourGuide.Utilities;
 using Xunit.Abstractions;
 
 namespace TourGuideTest
@@ -44,21 +36,22 @@ namespace TourGuideTest
             _output = output;
         }
 
-        [Fact(Skip = ("Delete Skip when you want to pass the test"))]
-        public void HighVolumeTrackLocation()
+        [Fact()]
+        public async Task HighVolumeTrackLocation()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
-            _fixture.Initialize(1000);
+            _fixture.Initialize(100000);
 
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
 
-            Stopwatch stopWatch = new Stopwatch();
+            Stopwatch stopWatch = new();
             stopWatch.Start();
-
-            foreach (var user in allUsers)
+            List<Task> tasks = new List<Task>();
+            foreach (User user in allUsers)
             {
-                _fixture.TourGuideService.TrackUserLocation(user);
+                tasks.Add(_fixture.TourGuideService.TrackUserLocation(user));
             }
+            await Task.WhenAll(tasks);
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
@@ -67,25 +60,26 @@ namespace TourGuideTest
             Assert.True(TimeSpan.FromMinutes(15).TotalSeconds >= stopWatch.Elapsed.TotalSeconds);
         }
 
-        [Fact(Skip = ("Delete Skip when you want to pass the test"))]
-        public void HighVolumeGetRewards()
+        [Fact()]
+        public async Task HighVolumeGetRewards()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
-            _fixture.Initialize(10);
+            _fixture.Initialize(100000);
 
-            Stopwatch stopWatch = new Stopwatch();
+            Stopwatch stopWatch = new();
             stopWatch.Start();
 
-            Attraction attraction = _fixture.GpsUtil.GetAttractions()[0];
+            List<Attraction> attractions = await _fixture.GpsUtil.GetAttractions();
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
-            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attraction, DateTime.Now)));
-
-            allUsers.ForEach(u => _fixture.RewardsService.CalculateRewards(u));
-
-            foreach (var user in allUsers)
+            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attractions[0], DateTime.Now)));
+            List<Task> tasks = new List<Task>();
+            foreach (User user in allUsers)
             {
-                Assert.True(user.UserRewards.Count > 0);
+                tasks.Add(_fixture.RewardsService.CalculateRewards(user));
             }
+            await Task.WhenAll(tasks);
+            allUsers.ForEach(user => Assert.True(user.UserRewards.Count > 0));
+
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
