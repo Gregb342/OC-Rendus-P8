@@ -30,8 +30,8 @@ jobs:
     - name: build
       run: dotnet build TourGuide.sln --configuration Release --no-restore
 
-    - name: tests
-      run: dotnet test TourGuide.sln --no-build --verbosity normal
+    - name: Run Tests
+      run: dotnet test TourGuideTest/TourGuideTest.csproj --no-build --logger "trx;LogFileName=test_results.trx"
 
     - name: publish
       run: dotnet publish TourGuide.sln -c Release -o publish
